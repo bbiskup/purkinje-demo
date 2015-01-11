@@ -1,3 +1,8 @@
 ---
+- include_vars: main.yml
 # Demo server for purkinje test runner
-- name 
+- name: Create demo user
+  user: >
+      name={{purkinje_demo_user}}
+      comment="Demo user for purkinje test runner"
+      home="/home/{{purkinje_demo_user}}"
