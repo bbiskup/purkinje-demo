@@ -18,6 +18,15 @@
   apt: name={{item}}
   with_items:
     - python
+    - nodejs
+    - npm
+
+# bower hashbang references 'node' nodejs
+- name: Create nodejs link for bower
+  file: >
+    src=/usr/bin/nodejs 
+    dest=/usr/bin/node 
+    state="link"
 
 - name: Create virtualenv
   shell: virtualenv {{venv_dir}}
@@ -43,5 +52,40 @@
      pip install -r requirements.txt &&
      pip install -e .
      chdir="{{demo_home}}/flotsam"
+  sudo: yes
+  sudo_user: "{{purkinje_demo_user}}"
+
+- name: Install purkinje-messages
+  shell: >
+     . {{venv_dir}}/bin/activate &&
+     pip install -r requirements.txt &&
+     pip install -e .
+     chdir="{{demo_home}}/purkinje-messages"
+  sudo: yes
+  sudo_user: "{{purkinje_demo_user}}"
+
+- name: Install pytest-purkinje
+  shell: >
+     . {{venv_dir}}/bin/activate &&
+     pip install -r requirements.txt &&
+     pip install -e .
+     chdir="{{demo_home}}/pytest-purkinje"
+  sudo: yes
+  sudo_user: "{{purkinje_demo_user}}"
+
+# TODO: should not be needed in production;
+# build assets and include them in egg
+- name: Install bower
+  shell: >
+     npm install -g bower
+
+- name: Install purkinje
+  shell: >
+     . {{venv_dir}}/bin/activate &&
+     pip install -r requirements.txt &&
+     npm install &&
+     bower install &&
+     pip install -e .
+     chdir="{{demo_home}}/purkinje"
   sudo: yes
   sudo_user: "{{purkinje_demo_user}}"
