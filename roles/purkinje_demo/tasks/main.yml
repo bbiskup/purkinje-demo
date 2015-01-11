@@ -43,6 +43,7 @@
     - purkinje-messages
     - pytest-purkinje
     - purkinje
+    - purkinje-sampleproject
   sudo: yes
   sudo_user: "{{purkinje_demo_user}}"
 
@@ -84,8 +85,17 @@
      . {{venv_dir}}/bin/activate &&
      pip install -r requirements.txt &&
      npm install &&
-     bower install &&
+     bower install --production --force-latest &&
+     bower install angular --force-latest &&
      pip install -e .
      chdir="{{demo_home}}/purkinje"
+  sudo: yes
+  sudo_user: "{{purkinje_demo_user}}"
+
+- name: Install purkinje-sampleproject
+  shell: >
+     . {{venv_dir}}/bin/activate &&
+     pip install -r dev-requirements.txt
+     chdir="{{demo_home}}/purkinje-sampleproject"
   sudo: yes
   sudo_user: "{{purkinje_demo_user}}"
