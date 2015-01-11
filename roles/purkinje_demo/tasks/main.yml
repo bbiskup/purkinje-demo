@@ -1,8 +1,34 @@
 ---
-- include_vars: main.yml
 # Demo server for purkinje test runner
+# Prerequisite:
+# Role "common" (https://github.com/bbiskup/ansible-serverconfig)
+
+- include_vars: main.yml
 - name: Create demo user
   user: >
       name={{purkinje_demo_user}}
       comment="Demo user for purkinje test runner"
-      home="/home/{{purkinje_demo_user}}"
+      home="{{demo_home}}"
+
+- name: Package management | APT update & upgrade
+  apt: update_cache=yes upgrade=full
+  when: refresh_apt
+
+- name: Install prerequisite APT packages
+  apt: name={{item}}
+  with_items:
+    - python
+
+- name: Create virtualenv
+  shell: virtualenv {{venv_dir}}
+
+- name: Clone git repositories
+  git: >
+      accept_hostkey=yes
+      repo=git://github.com/bbiskup/{{item}}.git
+      dest=/home/{{purkinje_demo_user}}/{{item}}
+  with_items:
+    - flotsam
+    - purkinje-messages
+    - pytest-purkinje
+    - purkinje

@@ -1,0 +1,6 @@
+purkinje_demo_user: purkinje_demo
+demo_home: /home/{{purkinje_demo_user}}
+refresh_apt: False
+
+venv_dir: "{{demo_home}}/venv"
+venv_bin: "{{venv_dir}}/bin"
