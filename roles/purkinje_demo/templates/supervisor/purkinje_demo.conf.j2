@@ -1,0 +1,22 @@
+# {{ansible_managed}}
+#
+
+[group:purkinje_demo]
+programs=purkinje_server,purkinje_testrun
+
+[program:purkinje_server]
+user = {{purkinje_demo_user}}
+directory={{demo_home}}
+command={{demo_home}}/venv/bin/purkinje
+autostart=true
+autorestart=true
+redirect_stderr=true
+
+[program:purkinje_testrun]
+user = {{purkinje_demo_user}}
+directory={{demo_home}}
+command={{demo_home}}/run_demo_tests.bash
+autostart=true
+autorestart=true
+redirect_stderr=true
+

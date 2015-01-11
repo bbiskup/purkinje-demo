@@ -1,0 +1,9 @@
+- name: restart supervisor
+  shell: service supervisor force-reload
+
+- name: restart purkinje_demo
+  supervisorctl: name=purkinje_demo:{{item}} state=restarted
+  with_items:
+    - purkinje_server
+    - purkinje_testrun
+

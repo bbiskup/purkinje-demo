@@ -28,6 +28,13 @@
     dest=/usr/bin/node 
     state="link"
 
+- name: Install demo test execution script
+  template: >
+    src=scripts/run_demo_tests.bash.j2
+    dest={{demo_home}}/run_demo_tests.bash
+    mode="540"
+    owner={{purkinje_demo_user}}
+
 - name: Create virtualenv
   shell: virtualenv {{venv_dir}}
   sudo: yes
@@ -99,3 +106,10 @@
      chdir="{{demo_home}}/purkinje-sampleproject"
   sudo: yes
   sudo_user: "{{purkinje_demo_user}}"
+
+- name: Configure supervisor to run demo server and tests
+  template: >
+    src=supervisor/purkinje_demo.conf.j2
+    dest=/etc/supervisor/conf.d/purkinje_demo.conf
+  notify:
+    - restart supervisor
