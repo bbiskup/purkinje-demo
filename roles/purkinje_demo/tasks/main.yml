@@ -35,10 +35,16 @@
     mode="540"
     owner={{purkinje_demo_user}}
 
+#- name: Create virtualenv
+#  shell: virtualenv {{venv_dir}}
+#  sudo: yes
+#  sudo_user: "{{purkinje_demo_user}}"
+
+# pro-forma install to create virtualenv
 - name: Create virtualenv
-  shell: virtualenv {{venv_dir}}
-  sudo: yes
-  sudo_user: "{{purkinje_demo_user}}"
+  pip: >
+    virtualenv={{purkinje_demo_user}}/venv
+    name=future
 
 - name: Clone git repositories
   git: >
