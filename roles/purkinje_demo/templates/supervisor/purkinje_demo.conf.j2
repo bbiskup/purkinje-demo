@@ -7,7 +7,7 @@ programs=purkinje_server,purkinje_testrun
 [program:purkinje_server]
 user = {{purkinje_demo_user}}
 directory={{demo_home}}
-command={{demo_home}}/venv/bin/purkinje
+command={{purkinje_venv_dir}}/bin/purkinje -c purkinje.yml
 autostart=true
 autorestart=true
 redirect_stderr=true

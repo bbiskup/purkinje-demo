@@ -18,15 +18,11 @@
   apt: name={{item}}
   with_items:
     - python
-    - nodejs
-    - npm
-
-# bower hashbang references 'node' nodejs
-- name: Create nodejs link for bower
-  file: >
-    src=/usr/bin/nodejs 
-    dest=/usr/bin/node 
-    state="link"
+    - python-virtualenv
+    - git
+    - supervisor
+    - nmap
+    - python-dev
 
 - name: Install demo test execution script
   template: >
@@ -35,81 +31,42 @@
     mode="540"
     owner={{purkinje_demo_user}}
 
-#- name: Create virtualenv
-#  shell: virtualenv {{venv_dir}}
-#  sudo: yes
-#  sudo_user: "{{purkinje_demo_user}}"
-
-# pro-forma install to create virtualenv
-- name: Create virtualenv
-  pip: >
-    virtualenv={{purkinje_demo_user}}/venv
-    name=future
-
-- name: Clone git repositories
-  git: >
-    repo="git://github.com/bbiskup/{{item}}.git"
-    accept_hostkey=yes
-    dest="{{demo_home}}/{{item}}"
+- name: Create virtualenvs
+  shell: >
+    cd && (virtualenv {{item}} || echo "Could not create virtualenv {{item}}")
+  sudo: yes
+  sudo_user: "{{purkinje_demo_user}}"
   with_items:
-    - flotsam
-    - purkinje-messages
-    - pytest-purkinje
-    - purkinje
-    - purkinje-sampleproject
-  sudo: yes
-  sudo_user: "{{purkinje_demo_user}}"
-
-- name: Install flotsam
-  shell: >
-     . {{venv_dir}}/bin/activate &&
-     pip install -r requirements.txt &&
-     pip install -e .
-     chdir="{{demo_home}}/flotsam"
-  sudo: yes
-  sudo_user: "{{purkinje_demo_user}}"
-
-- name: Install purkinje-messages
-  shell: >
-     . {{venv_dir}}/bin/activate &&
-     pip install -r requirements.txt &&
-     pip install -e .
-     chdir="{{demo_home}}/purkinje-messages"
-  sudo: yes
-  sudo_user: "{{purkinje_demo_user}}"
-
-- name: Install pytest-purkinje
-  shell: >
-     . {{venv_dir}}/bin/activate &&
-     pip install -r requirements.txt &&
-     pip install -e .
-     chdir="{{demo_home}}/pytest-purkinje"
-  sudo: yes
-  sudo_user: "{{purkinje_demo_user}}"
-
-# TODO: should not be needed in production;
-# build assets and include them in egg
-- name: Install bower
-  shell: >
-     npm install -g bower
+   - "{{purkinje_venv_dir}}"
+   - "{{sampleproject_venv_dir}}"
 
 - name: Install purkinje
   shell: >
-     . {{venv_dir}}/bin/activate &&
-     pip install -r requirements.txt &&
-     npm install &&
-     bower install --production --force-latest &&
-     bower install angular --force-latest &&
-     pip install -e .
-     chdir="{{demo_home}}/purkinje"
-  sudo: yes
+     . {{purkinje_venv_dir}}/bin/activate &&
+     pip install --upgrade purkinje
   sudo_user: "{{purkinje_demo_user}}"
 
-- name: Install purkinje-sampleproject
+- name: Install purkinje configuration
+  template: >
+      src=conf/purkinje.yml
+      dest={{demo_home}}/purkinje.yml
+
+- name: Create sample project directory
+  file: >
+      path={{demo_home}}/purkinje-sampleproject
+      state=directory
+
+- name: Check out purkinje-sampleproject repository
+  git: >
+      repo=https://github.com/bbiskup/purkinje-sampleproject
+      version=master
+      dest={{demo_home}}/purkinje-sampleproject
+
+- name: Install purkinje-sampleproject dependencies
   shell: >
-     . {{venv_dir}}/bin/activate &&
-     pip install -r dev-requirements.txt
-     chdir="{{demo_home}}/purkinje-sampleproject"
+    . {{sampleproject_venv_dir}}/bin/activate &&
+    pip install --upgrade -r dev-requirements.txt
+    chdir="{{demo_home}}/purkinje-sampleproject"
   sudo: yes
   sudo_user: "{{purkinje_demo_user}}"
 
