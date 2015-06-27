@@ -23,6 +23,7 @@
     - supervisor
     - nmap
     - python-dev
+    - libyaml-dev
 
 - name: Install demo test execution script
   template: >
@@ -50,17 +51,20 @@
   template: >
       src=conf/purkinje.yml
       dest={{demo_home}}/purkinje.yml
+  sudo_user: "{{purkinje_demo_user}}"
 
 - name: Create sample project directory
   file: >
       path={{demo_home}}/purkinje-sampleproject
       state=directory
+  sudo_user: "{{purkinje_demo_user}}"
 
 - name: Check out purkinje-sampleproject repository
   git: >
       repo=https://github.com/bbiskup/purkinje-sampleproject
-      version=master
+      version=dev
       dest={{demo_home}}/purkinje-sampleproject
+  sudo_user: "{{purkinje_demo_user}}"
 
 - name: Install purkinje-sampleproject dependencies
   shell: >
@@ -69,6 +73,11 @@
     chdir="{{demo_home}}/purkinje-sampleproject"
   sudo: yes
   sudo_user: "{{purkinje_demo_user}}"
+
+#- name: Install pytest to run purkinje tests
+#  shell: >
+#      pip install pytest
+#  sudo_user: "{{purkinje_demo_user}}"
 
 - name: Configure supervisor to run demo server and tests
   template: >
