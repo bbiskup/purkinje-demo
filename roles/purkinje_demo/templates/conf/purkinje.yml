@@ -3,3 +3,4 @@ global:
     debugMode: yes
     serverPort: 5000
     serverHost: 0.0.0.0
+    compressAssets: yes
